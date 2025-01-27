@@ -10,16 +10,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    ports:
-      - "5432:5432"
-#  java:
-#    image: java-challenge
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=postgres
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
 #    ports:
-#    - "8080:8080"
+#      - "5432:5432"
+  java:
+    image: java-challenge
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+    - "8080:8080"
