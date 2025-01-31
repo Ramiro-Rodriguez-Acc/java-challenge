@@ -5,11 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Data;
 
 import java.time.LocalDate;
 
 import static com.javachallenge.utils.Constants.*;
-
+@Data
 @Entity
 public class Accreditation {
 
@@ -37,43 +38,5 @@ public class Accreditation {
         this.creationDate = LocalDate.now();
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public int getPointOfSaleId() {
-        return pointOfSaleId;
-    }
-
-    public void setPointOfSaleId(int pointOfSaleId) {
-        this.pointOfSaleId = pointOfSaleId;
-    }
-
-    public String getPointOfSaleName() {
-        return pointOfSaleName;
-    }
-
-    public void setPointOfSaleName(String pointOfSaleName) {
-        this.pointOfSaleName = pointOfSaleName;
-    }
 }
