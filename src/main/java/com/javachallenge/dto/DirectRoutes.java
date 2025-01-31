@@ -13,6 +13,7 @@ public class DirectRoutes {
     String origin;
     @JsonProperty(COSTO_POR_DESTINO)
     Map<String, Integer> routeCost;
+
     public DirectRoutes() {
         this.routeCost = new HashMap<>();
     }

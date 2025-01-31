@@ -1,3 +1,5 @@
+En la V2 se buscara cachear los datos en una BD redis
+
 # Deployar proyecto:
 
 Usar podman o docker segun corresponda

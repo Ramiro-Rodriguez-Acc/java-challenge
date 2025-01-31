@@ -26,6 +26,7 @@ public final  class Constants {
     public static final String NOMBRE = "nombre";
     public static final String OK_MESSAGE_COSTO_REMOVDO = "Costo removido";
     public static final String OK_MESSAGE_PUNTO_DE_VENTA_GUARDADO = "Punto de Venta Creado";
+    public static final String OK_MESSAGE_COSTO_GUARDADO = "Costo Creado";
     public static final String OK_MESSAGE_PUNTO_DE_VENTA_ACTUALIZADO = "Punto de Venta Actualizado";
     public static final String OK_MESSAGE_PUNTO_DE_VENTA_ELIMINADO = "Punto de Venta Eliminado";
     public static final String PARAMETRO_EN_FORMATO_NO_VALIDO = "Parametro en formato no valido: ";

@@ -1,6 +1,7 @@
 package com.javachallenge.controller;
 
 import com.javachallenge.model.PointOfSale;
+import com.javachallenge.service.CostService;
 import com.javachallenge.service.PointOfSaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,14 @@ import static com.javachallenge.utils.Constants.*;
 @RestController
 @RequestMapping("/puntos-de-venta")
 public class PointOfSaleController {
-    @Autowired
-    PointOfSaleService service;
+
+    private final  PointOfSaleService service;
+    private final CostService costService;
+
+    public PointOfSaleController(PointOfSaleService service, CostService costService) {
+        this.service = service;
+        this.costService = costService;
+    }
 
 
     @GetMapping
@@ -39,7 +46,7 @@ public class PointOfSaleController {
     @DeleteMapping(ID_PARAM)
     public ResponseEntity<String> delete(@PathVariable int id) throws Exception {
         service.delete(id);
-
+        costService.deletePointOfSale(id);
         return ResponseEntity.ok(OK_MESSAGE_PUNTO_DE_VENTA_ELIMINADO);
 
     }

@@ -1,13 +1,11 @@
 package com.javachallenge.controller;
 
 import com.javachallenge.dto.DirectRoutes;
-import com.javachallenge.dto.LowerCost;
+import com.javachallenge.dto.LowestCost;
 import com.javachallenge.service.CostService;
+import com.javachallenge.service.GraphService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
 
 import static com.javachallenge.utils.Constants.*;
 
@@ -16,8 +14,10 @@ import static com.javachallenge.utils.Constants.*;
 public class CostController {
 
     private final CostService service;
+    private final GraphService graphService;
 
-    public CostController(CostService service) {
+    public CostController(CostService service, GraphService graphService) {
+        this.graphService = graphService;
         this.service = service;
     }
 
@@ -26,7 +26,7 @@ public class CostController {
                                       @RequestParam int idB,
                                           @RequestParam(COSTO) int cost) throws Exception {
         service.add(idA, idB, cost);
-        return ResponseEntity.ok(OK_MESSAGE_PUNTO_DE_VENTA_GUARDADO);
+        return ResponseEntity.ok(OK_MESSAGE_COSTO_GUARDADO);
     }
 
     @DeleteMapping
@@ -41,8 +41,8 @@ public class CostController {
     }
 
     @GetMapping(MENOR_COSTO_URL)
-    public ResponseEntity<LowerCost> getLowerCost(@RequestParam int idA, @RequestParam int idB) throws Exception {
-        return ResponseEntity.ok(service.getLowerCost(idA, idB));
+    public ResponseEntity<LowestCost> getLowerCost(@RequestParam int idA, @RequestParam int idB) throws Exception {
+        return ResponseEntity.ok(graphService.getShortestPath(idA, idB));
     }
 
 }
