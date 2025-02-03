@@ -35,7 +35,7 @@ public final  class Constants {
     public static final String PUNTO_DE_VENTA_ORIGEN = "puntoDeVentaOrigen";
     public static final String RUTA= "ruta";
     public static final String RUTA_DIRECTA_URL= "/rutas-directas/{id}";
-    public static final int MAX_POINT_OF_SALE = 100;
+    public static final int MAX_POINT_OF_SALE = 11;
     public static final int MAX_COST = 1000;
 
 }

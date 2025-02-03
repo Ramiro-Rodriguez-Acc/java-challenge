@@ -6,8 +6,6 @@ import com.javachallenge.service.CostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
 
 import static com.javachallenge.utils.Constants.*;
 

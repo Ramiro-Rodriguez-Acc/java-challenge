@@ -109,7 +109,7 @@ public class CostService {
             return lowerCost;
         }
 
-        lowerCost.setCost(routeCostService.getLowerCost(idA, idB));
+        lowerCost.setCost(routeCostService.getLowerCost(idB, idA));
         route = routeService.getRoute(idA, idB);
         for (int i = route.size()-1; i >= 0; i--) {
             sb.append(pointOfSaleMap.get(route.get(i)).getName());

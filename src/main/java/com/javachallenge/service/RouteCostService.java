@@ -33,35 +33,48 @@ public class RouteCostService {
     public void newLowerCost(int idx, int idy, int cost, int length, int idConnection){
         if(lowerCost[idx][idy] > cost){
             lowerCost[idx][idy] = cost;
-            routeService.newLowerCost(Integer.min(idx,idy),Integer.max(idx,idy), idConnection);
 
+            routeService.newLowerCostRoute( idx,idy, idConnection);
             checkIndirectCosts(idx, idy, cost, length);
         }
     }
 
-    public void checkIndirectCosts(int idx, int idy, int cost, int length){
-            for(int i = idx+1; i < length; i++) {
-                newLowerCost(idx, i, cost + lowerCost[Integer.min(idy, i)][Integer.max(idy, i)], length, idy);
+    public void checkIndirectCosts(int idx, int idy, int cost, int length) {
+        for (int i = 1; i < MAX_POINT_OF_SALE; i++) {
+            if (i != idx && i != idy) {
+                int minIdx = Math.min(i, idx);
+                int maxIdx = Math.max(i, idx);
+
+                int minIdy = Math.min(i, idy);
+                int maxIdy = Math.max(i, idy);
+
+                int costViaIdx = lowerCost[minIdx][maxIdx] + cost;
+
+                if (costViaIdx < lowerCost[minIdy][maxIdy]) {
+                    newLowerCost(minIdy, maxIdy, costViaIdx, length, idx);
+                }
+
+                int costViaIdy = lowerCost[minIdy][maxIdy] + cost;
+
+                if (costViaIdy < lowerCost[minIdx][maxIdx]) {
+                    newLowerCost(minIdx, maxIdx, costViaIdy, length, idy);
+                }
             }
-           for (int i = 1; i < idy; i++) {
-                newLowerCost(i, idy, cost + lowerCost[Integer.min(idx, i)][Integer.max(idx, i)], length, idx);
+        }}
 
+
+            public int getLowerCost ( int idx, int idy){
+                return lowerCost[idx][idy];
+            }
+
+            public void restart (Map<Integer, Cost> costMap){
+                initData();
+                routeService.clearMap();
+                int length = costMap.size();
+                for (Map.Entry<Integer, Cost> entry : costMap.entrySet()) {
+                    Cost cost = entry.getValue();
+                    newDirectCost(Integer.min(cost.getIdA(), cost.getIdB()), Integer.max(cost.getIdA(), cost.getIdB()), cost.getCost(), length);
+                }
             }
 
     }
-
-    public int getLowerCost(int idx, int idy){
-        return lowerCost[idx][idy];
-    }
-
-    public void restart(Map<Integer, Cost> costMap) {
-        initData();
-        routeService.clearMap();
-        int length = costMap.size();
-        for (Map.Entry<Integer, Cost> entry : costMap.entrySet()) {
-            Cost cost = entry.getValue();
-            newDirectCost(Integer.min(cost.getIdA(), cost.getIdB()), Integer.max(cost.getIdA(), cost.getIdB()), cost.getCost(), length);
-        }
-        }
-    }
-

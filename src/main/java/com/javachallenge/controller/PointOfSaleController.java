@@ -13,8 +13,11 @@ import static com.javachallenge.utils.Constants.*;
 @RestController
 @RequestMapping("/puntos-de-venta")
 public class PointOfSaleController {
-    @Autowired
-    PointOfSaleService service;
+    final PointOfSaleService service;
+
+    public PointOfSaleController(PointOfSaleService service) {
+        this.service = service;
+    }
 
 
     @GetMapping

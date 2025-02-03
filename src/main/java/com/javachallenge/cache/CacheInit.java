@@ -36,20 +36,20 @@ public class CacheInit implements CommandLineRunner {
         pointOfSaleMap.put(10, new PointOfSale("Catamarca"));
 
         cache.putMap(POINT_OF_SALE_MAP, pointOfSaleMap);
+        costService.add(6, 7, 32);
+        costService.add(4, 6, 6);
+        costService.add(10, 5, 5);
+        costService.add(4, 5, 5);
+        costService.add(10, 7, 5);
         costService.add(1, 2, 2);
         costService.add(1, 3, 3);
         costService.add(2, 3, 5);
         costService.add(2, 4, 10);
         costService.add(1, 4, 11);
-        costService.add(4, 5, 5);
         costService.add(2, 5, 14);
-        costService.add(6, 7, 32);
         costService.add(8, 9, 11);
-        costService.add(10, 7, 5);
         costService.add(3, 8, 10);
         costService.add(5, 8, 30);
-        costService.add(10, 5, 5);
-        costService.add(4, 6, 6);
 
 
 

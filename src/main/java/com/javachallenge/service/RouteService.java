@@ -6,9 +6,9 @@ import java.util.*;
 
 @Service
 public class RouteService {
-    private final Map<String, List<Integer>> routes= new HashMap();
+    private final Map<String, List<Integer>> routes= new HashMap<>();
 
-    public void newLowerCost(int idx, int idy, int idNewConnection) {
+    public void newLowerCostRoute(int idx, int idy, int idNewConnection) {
         if (idy==idNewConnection){
             newDirectCost(idx, idy);
         } else{
@@ -24,26 +24,38 @@ public class RouteService {
    }
 
     public List<Integer> getRoute(int idx, int idy) {
-        return Optional.ofNullable(routes.get(idx+"->"+idy)).orElse(new ArrayList<>());
-    }
+        return Optional.ofNullable(routes.get(Integer.min(idx, idy) + "->" + Integer.max(idx, idy)))
+                .map(ArrayList::new)
+                .orElse(new ArrayList<>());    }
 
     public void update(int idx, int idy, int idNewConnection) {
         List<Integer> route = getRoute(idx,idy);
 
-        int indexIdx = Integer.max(route.indexOf(idx),0);
+        int indexIdx = Math.max(route.indexOf(idx),0);
+        int indexIdy = Math.max(route.indexOf(idy),0);
         if (!route.isEmpty()){
-            int indexIdy = route.indexOf(idy);
-            route.subList(indexIdx,indexIdy+1).clear();
+            route.subList(Math.min(indexIdx,indexIdy), Math.max(indexIdx,indexIdy)+1).clear();
         }
-        List<Integer> routeNewConnection = getRoute(idx,idNewConnection);
-
-        if (routeNewConnection.isEmpty()){
-            routeNewConnection.add(idx);
-            routeNewConnection.add(idNewConnection);
+        List<Integer> routeNewConnection1 = getRoute(idx,idNewConnection);
+        if (idx>idNewConnection){
+            Collections.reverse(routeNewConnection1);
+        }
+        if (routeNewConnection1.isEmpty()){
+            routeNewConnection1.add(idx);
+            routeNewConnection1.add(idNewConnection);
+        }
+        List<Integer> routeNewConnection2 = getRoute(idNewConnection,idy);
+        if (idy<idNewConnection){
+            Collections.reverse(routeNewConnection2);
+        }
+        if (routeNewConnection2.isEmpty()){
+            routeNewConnection2.add(idy);
+        } else {
+            routeNewConnection2.remove((Integer) idNewConnection);
         }
 
-        route.addAll(indexIdx,routeNewConnection);
-        route.add(idy);
+        route.addAll(Math.min(indexIdx,indexIdy) ,routeNewConnection1);
+        route.addAll(routeNewConnection2);
         routes.put((idx+"->"+idy),route);
     }
 
