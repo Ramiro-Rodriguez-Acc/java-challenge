@@ -11,16 +11,25 @@ spring:
             - Path=/api/**
           filters:
             - StripPrefix=1
+      discovery:
+         locator:
+           enabled: true
+           lowerCaseServiceId: true 
+    loadbalancer:
+      ribbon:
+        enabled: false
+      cache:
+        enabled: true
 
-logging:
-  level:
-    org.springframework.cloud.gateway: INFO
+
 
 service:
   instances:
     - uri: java-app-1:8080
     - uri: java-app-2:8080
     - uri: java-app-3:8080
+
+
 
 
 

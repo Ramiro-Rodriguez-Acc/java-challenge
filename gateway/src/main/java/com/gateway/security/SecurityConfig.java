@@ -38,9 +38,9 @@ public class SecurityConfig {
         http
 
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/swagger/**", "/health").permitAll()
-                        .pathMatchers("/acreditacion/**").hasRole("ADMIN")
-                        .pathMatchers( "/punto-de-venta/**").hasAnyRole("ADMIN", "USER")
+                        .pathMatchers("/api/swagger-ui/**", "/api/health").permitAll()
+                        .pathMatchers("/api/acreditacion/**").hasRole("ADMIN")
+                        .pathMatchers( "/api/punto-de-venta/**").hasAnyRole("ADMIN", "USER")
                         .anyExchange().authenticated()
                 )
                 .httpBasic(withDefaults())
