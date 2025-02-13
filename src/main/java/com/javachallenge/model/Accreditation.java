@@ -10,16 +10,17 @@ import lombok.Data;
 import java.time.LocalDate;
 
 import static com.javachallenge.utils.Constants.*;
+
 @Data
 @Entity
 public class Accreditation {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(ID)
     private Integer id;
     @JsonProperty(IMPORTE)
-    private int amount;
+    private Long amount;
     @JsonProperty(FECHA_DE_CREACION)
     private LocalDate creationDate;
     @JsonProperty(PUNTO_DE_VENTA_ID)
@@ -31,7 +32,7 @@ public class Accreditation {
         this.creationDate = LocalDate.now();
     }
 
-    public Accreditation(int amount, int pointOfSaleId, String pointOfSaleName) {
+    public Accreditation(Long amount, int pointOfSaleId, String pointOfSaleName) {
         this.amount = amount;
         this.pointOfSaleId = pointOfSaleId;
         this.pointOfSaleName = pointOfSaleName;

@@ -9,10 +9,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.NoSuchElementException;
 
-import static com.javachallenge.utils.Constants.*;
 
 @ControllerAdvice
 public class ExceptionGlobalHandler {
+    private static final String PARAMETRO_EN_FORMATO_NO_VALIDO = "Parametro en formato no valido: ";
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {

@@ -1,89 +1,55 @@
 package com.javachallenge.service;
 
-import com.javachallenge.cache.CacheService;
-import com.javachallenge.dto.DirectRoutes;
-import com.javachallenge.dto.LowestCost;
+import com.javachallenge.dto.CostDTO;
+import com.javachallenge.dto.impl.PointOfSaleGetOne;
 import com.javachallenge.model.Cost;
 import com.javachallenge.model.PointOfSale;
+import com.javachallenge.repository.CostRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.javachallenge.utils.Constants.*;
 
+
 @Service
 public class CostService {
-    private final CacheService cache;
+
+    private static final String EL_COSTO_DEBE_SER_ENTERO_POSITIVO ="El costo debe ser entero positivo";
+    private static final String ERROR_MESSAGE_PUNTO_DE_VENTA_NO_ENCONTRADO = "Costo no encontrado";
     private final PointOfSaleService pointOfSaleService;
+    private final CostRepository repository;
 
-    public CostService(CacheService cache, PointOfSaleService pointOfSaleService) {
-                this.cache = cache;
+    public CostService( PointOfSaleService pointOfSaleService, CostRepository repository) {
                 this.pointOfSaleService = pointOfSaleService;
-                createMap();
-    }
-
-    public void createMap(){
-        Map<Integer, Cost> costMap = new HashMap<>();
-        cache.putMap(COST_MAP, costMap, Cost.class);
-    }
-    @Transactional
-    public void add(int idA, int idB, int cost) throws Exception {
-        validateCost(cost);
-        cache.add(new Cost(idA, idB, cost), COST_MAP, Cost.class);
+                this.repository = repository;
     }
 
     @Transactional
-    public void delete(int idA, int idB) throws Exception {
-        Map<Integer, Cost> costMap = cache.getMap(COST_MAP, Cost.class);
-        deleteIfExist(costMap, idA, idB);
-    }
-
-    public void deletePointOfSale(int idA) throws Exception {
-        Map<Integer, Cost> costMap = cache.getMap(COST_MAP, Cost.class);
-        for (Map.Entry<Integer, Cost> entry : costMap.entrySet()) {
-            Cost cost = entry.getValue();
-            if (cost.getIdA() == idA || cost.getIdB() == idA) {
-                cache.delete(entry.getKey(), COST_MAP, Cost.class);
-            }
-        }
-    }
-
-    public void deleteIfExist(Map<Integer, Cost> costMap, int idA, int idB ) throws Exception {
-        for (Map.Entry<Integer, Cost> entry : costMap.entrySet()) {
-            Cost cost = entry.getValue();
-            if (cost.getIdA() == idA && cost.getIdB() == idB) {
-                cache.delete(entry.getKey(), COST_MAP, Cost.class);
-                return;
-            }
-        }
-        throw new NoSuchElementException(ERROR_MESSAGE_COSTO_ENTRE_PUNTOS_NO_ENCONTRADO);
+    public PointOfSaleGetOne add(int idFrom, CostDTO costDTO)  {
+        validateCost(costDTO.getCost());
+        Cost cost = repository.save(new Cost(pointOfSaleService.getFromRepository(idFrom), pointOfSaleService.getFromRepository(costDTO.getIdTo()), costDTO.getCost()));
+        return pointOfSaleService.addCost(idFrom, cost);
     }
 
     @Transactional
-    public DirectRoutes getDirectRoutes(int id) throws Exception {
-        Map<Integer, Cost> costMap = cache.getMap(COST_MAP, Cost.class);
-        Map<Integer, PointOfSale> pointOfSaleMap = pointOfSaleService.getAll();
+    @Caching(evict = {
+            @CacheEvict(value = POINT_OF_SALE_LIST, allEntries = true),
+            @CacheEvict(value = POINT_OF_SALE, key = "#idFrom"),
+            @CacheEvict(value= GRAPH, allEntries = true)
+    })
+    public void delete(int idFrom, int idTo)  {
+        PointOfSale pointOfSaleFrom = pointOfSaleService.getFromRepository(idFrom);
+        PointOfSale pointOfSaleTo = pointOfSaleService.getFromRepository(idTo);
+        Cost cost = repository.findCostByPointOfSaleFromAndPointOfSaleTo(pointOfSaleFrom,pointOfSaleTo)
+                .orElseThrow(() -> new NoSuchElementException(ERROR_MESSAGE_PUNTO_DE_VENTA_NO_ENCONTRADO));
 
-        DirectRoutes directRoutes = new DirectRoutes();
-        Map<String, Integer> routeCost= new HashMap<>();
-        directRoutes
-                .setOrigin(Optional.ofNullable(pointOfSaleMap.get(id).getName())
-                        .orElseThrow(() ->new NoSuchElementException(ERROR_MESSAGE_PUNTO_DE_VENTA_NO_ENCONTRADO)));
-        for (Map.Entry<Integer, Cost> entry : costMap.entrySet()) {
-            Cost cost = entry.getValue();
-            if (cost.getIdA() == id) {
-                routeCost.put(pointOfSaleMap.get(cost.getIdB()).getName(), cost.getCost());
-            }
-            if (cost.getIdB() == id) {
-                routeCost.put(pointOfSaleMap.get(cost.getIdA()).getName(), cost.getCost());
-            }
-        }
-        if (routeCost.isEmpty()){
-            throw new NoSuchElementException(ERROR_MESSAGE_PUNTO_DE_VENTA_NO_TIENE_RUTA_ASOCIADA);
-        }
-        directRoutes.setRouteCost(routeCost);
-        return directRoutes;
+        repository.delete(cost);
+
     }
 
     public void validateCost (int cost){
@@ -92,8 +58,5 @@ public class CostService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public Map<Integer, Cost> getAll() throws Exception {
-        return cache.getMap(COST_MAP, Cost.class);
-    }
+
 }

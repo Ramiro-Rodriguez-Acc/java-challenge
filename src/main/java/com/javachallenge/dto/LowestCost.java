@@ -9,6 +9,8 @@ import java.util.List;
 import static com.javachallenge.utils.Constants.*;
 @Data
 public class LowestCost {
+    private static final String RUTA= "ruta";
+
     @JsonProperty(COSTO)
     private int cost;
     @JsonProperty(RUTA)

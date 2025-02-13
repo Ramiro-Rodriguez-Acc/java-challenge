@@ -1,5 +1,27 @@
 En la V2 se buscara cachear los datos en una BD redis
 
+```mermaid
+classDiagram
+class PointOfSale {
+    +int id
+    +String name
+    +List<Cost> costs
+    }
+class Cost {
+    +int id
+    +Long cost
+    +int idTo
+    }
+class Accreditation {
+    +int id
+    +int amount
+    +LocalDate creationDate
+    +int pointOfSaleId
+    }
+
+    PointOfSale <|-- Cost
+    PointOfSale <|-- Accreditation
+```
 # Deployar proyecto:
 
 Usar podman o docker segun corresponda

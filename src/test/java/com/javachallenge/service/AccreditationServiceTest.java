@@ -1,21 +1,24 @@
 package com.javachallenge.service;
 
+import com.javachallenge.dto.AccreditationCreateDTO;
+import com.javachallenge.dto.AccreditationGetDTO;
 import com.javachallenge.model.Accreditation;
 import com.javachallenge.model.PointOfSale;
 import com.javachallenge.repository.AccreditationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
+@ExtendWith(MockitoExtension.class)
 public class AccreditationServiceTest {
+
     @Mock
     private PointOfSaleService pointOfSaleService;
 
@@ -25,49 +28,45 @@ public class AccreditationServiceTest {
     @InjectMocks
     private AccreditationService accreditationService;
 
-    private static final String ERROR_MESSAGE_ACREDITACION_NO_ENCONTRADA = "Acreditacion no encontrado";
-    private Accreditation mockAccreditation;
+    private PointOfSale pointOfSale;
+    private AccreditationCreateDTO accreditationCreateDTO;
+    private Accreditation accreditation;
+
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockAccreditation = new Accreditation(100, 1, "Test POS");
-        mockAccreditation.setId(1);
-
+    void setUp() {
+        pointOfSale = new PointOfSale(5, "Ciudad A");
+        accreditationCreateDTO = new AccreditationCreateDTO();
+        accreditationCreateDTO.setAmount(1000L);
+        accreditationCreateDTO.setPointOfSaleId(5);
+        accreditation = new Accreditation(1000L, 5, "Ciudad A");
+        accreditation.setId(1);
     }
 
     @Test
-    public void testCreate() throws Exception {
-        PointOfSale mockPointOfSale = new PointOfSale("Test POS");
-        when(pointOfSaleService.get(1)).thenReturn(mockPointOfSale);
+    void create_ShouldCreateAccreditationAndReturnDTO() {
+        Accreditation accreditationNoId = new Accreditation(1000L, 5, "Ciudad A");
+        accreditationNoId.setCreationDate(accreditation.getCreationDate());
+        when(pointOfSaleService.getFromRepository(5)).thenReturn(pointOfSale);
+        when(repository.save(accreditationNoId)).thenReturn(accreditation);
 
-        accreditationService.create(100, 1);
+        AccreditationGetDTO result = accreditationService.create(accreditationCreateDTO);
 
-        verify(pointOfSaleService, times(1)).get(1);
-        verify(repository, times(1)).save(any(Accreditation.class));
+        assertEquals(1000L, result.getAmount());
+        assertEquals(5, result.getPointOfSaleId());
+        verify(repository, times(1)).save(accreditationNoId);
+        verify(pointOfSaleService, times(1)).getFromRepository(5);
     }
 
-    @Test
-    public void testGet() {
-        when(repository.findById(1)).thenReturn(Optional.of(mockAccreditation));
-
-        Accreditation result = accreditationService.get(1);
-
-        assertNotNull(result);
-        assertEquals(100, result.getAmount());
-        assertEquals(1, result.getId());
-        assertEquals("Test POS", result.getPointOfSaleName());
-        verify(repository, times(1)).findById(1);
-    }
 
     @Test
-    public void testGet_NotFound() {
-        when(repository.findById(1)).thenReturn(Optional.empty());
+    void get_ShouldReturnAccreditationDTO() {
+        when(repository.findById(1)).thenReturn(Optional.of(accreditation));
 
-        Exception exception = assertThrows(NoSuchElementException.class, () -> {
-            accreditationService.get(1);
-        });
+        AccreditationGetDTO result = accreditationService.get(1);
 
-        assertEquals(ERROR_MESSAGE_ACREDITACION_NO_ENCONTRADA, exception.getMessage());
+
+        assertEquals(1000L, result.getAmount());
+        assertEquals(5, result.getPointOfSaleId());
         verify(repository, times(1)).findById(1);
     }
 

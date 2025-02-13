@@ -1,37 +1,34 @@
 package com.javachallenge.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import static com.javachallenge.utils.Constants.NOMBRE;
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class PointOfSale  {
-
-
-    @JsonProperty(NOMBRE)
+    private static final String POINT_OF_SALE_FROM ="pointOfSaleFrom";
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String name;
+    @OneToMany(mappedBy = POINT_OF_SALE_FROM, cascade =  CascadeType.REMOVE, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Cost> costs = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return name;
+    public PointOfSale(String name) {
+        this.name = name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PointOfSale that = (PointOfSale) o;
-        return name.equals(that.name);
+    public PointOfSale(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
 }

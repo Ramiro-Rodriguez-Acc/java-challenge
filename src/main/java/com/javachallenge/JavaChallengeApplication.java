@@ -14,12 +14,6 @@ import java.io.IOException;
 @SpringBootApplication
 public class JavaChallengeApplication {
 
-    @Bean(destroyMethod="shutdown")
-    RedissonClient redisson() throws IOException {
-        Config config = new Config();
-        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
-        return Redisson.create(config);
-    }
     public static void main(String[] args) {
         SpringApplication.run(JavaChallengeApplication.class, args);
     }
