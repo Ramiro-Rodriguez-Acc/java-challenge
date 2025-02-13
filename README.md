@@ -10,7 +10,8 @@ class PointOfSale {
 class Cost {
     +int id
     +Long cost
-    +int idTo
+    +PointOfSale pointOfSaleFrom
+    +PointOfSale pointOfSaleto
     }
 class Accreditation {
     +int id
@@ -19,8 +20,8 @@ class Accreditation {
     +int pointOfSaleId
     }
 
-    PointOfSale <|-- Cost
-    PointOfSale <|-- Accreditation
+    PointOfSale <--> Cost : "contains"
+    Accreditation --> PointOfSale : "contains"
 ```
 # Deployar proyecto:
 
