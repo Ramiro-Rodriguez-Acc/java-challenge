@@ -20,8 +20,9 @@ class Accreditation {
     +int pointOfSaleId
     }
 
-    PointOfSale <--> Cost : "contains"
-    Accreditation --> PointOfSale : "contains"
+    PointOfSale "1:N" --> Cost : 
+    PointOfSale --> Accreditation : 
+    Cost "2:1" --> PointOfSale :  
 ```
 # Deployar proyecto:
 
